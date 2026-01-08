@@ -117,10 +117,14 @@ def set_merger(
 
 
 def dump_file(
-    data: Any, file_path: Path | None, file_type: Literal["yaml", "toml", "json", "env"]
+    data: Any,
+    file_path: Path | None,
+    file_type: Literal["yaml", "toml", "json", "env"] | None = None,
 ) -> None:
     try:
         if file_path is None:
+            if file_type is None:
+                raise ValueError("file_type must be specified when file_path is None")
             import sys
 
             fh = sys.stdout
