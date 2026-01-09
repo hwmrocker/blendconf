@@ -4,7 +4,7 @@ import typer
 from rich.console import Console
 from rich.traceback import install
 
-from mconf import MergeStrategy, dump_file, merge_configs
+from blendconf import MergeStrategy, dump_file, merge_configs
 
 install()
 console = Console(

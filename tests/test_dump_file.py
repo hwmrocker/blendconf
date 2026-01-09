@@ -6,7 +6,7 @@ import tomli
 import yaml
 from dotenv import dotenv_values
 
-from mconf import dump_file
+from blendconf import dump_file
 
 
 @pytest.mark.parametrize(

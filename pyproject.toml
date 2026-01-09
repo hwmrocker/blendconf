@@ -1,5 +1,5 @@
 [project]
-name = "mconf"
+name = "blendconf"
 version = "1.0.0"
 description = "Helper to merge multiple configuration files into one file."
 readme = "README.md"
@@ -14,7 +14,7 @@ dependencies = [
     "tomli-w>=1.2.0",
     "typer>=0.21.1",
 ]
-scripts = { mconf = "mconf.cli:entry_point" }
+scripts = { blendconf = "blendconf.cli:entry_point" }
 
 [build-system]
 requires = ["uv_build>=0.9.7,<0.10.0"]

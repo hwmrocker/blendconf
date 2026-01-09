@@ -2,7 +2,7 @@ import copy
 
 import pytest
 
-from mconf import MergeStrategy, dict_merger
+from blendconf import MergeStrategy, dict_merger
 
 
 @pytest.mark.parametrize(
