@@ -1,6 +1,6 @@
 [project]
 name = "blendconf"
-version = "1.0.0.post2"
+version = "1.0.1"
 description = "Helper to merge multiple configuration files into one file."
 readme = "README.md"
 authors = [{ name = "Olaf Gladis", email = "hwmrocker@gladis.org" }]
