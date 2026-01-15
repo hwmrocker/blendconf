@@ -11,6 +11,23 @@ class MergeStrategy(Enum):
 
 
 def load_file(file_path: Path) -> Any:
+    """Load and parse a configuration file based on its extension.
+    Supports YAML (.yaml, .yml), TOML (.toml), JSON (.json), and ENV (.env) file formats.
+    Args:
+        file_path (Path): Path to the configuration file to load.
+    Returns:
+        Any: The parsed content of the file. The return type depends on the file format:
+            - YAML/JSON: dict, list, or primitive types
+            - TOML: dict
+            - ENV: dict with string keys and values
+    Raises:
+        ValueError: If the file extension is not supported.
+        FileNotFoundError: If the file does not exist.
+        yaml.YAMLError: If YAML parsing fails.
+        tomli.TOMLDecodeError: If TOML parsing fails.
+        json.JSONDecodeError: If JSON parsing fails.
+    """
+
     match file_path.suffix.lower():
         case ".yaml" | ".yml":
             import yaml
@@ -121,6 +138,31 @@ def dump_file(
     file_path: Path | None,
     file_type: Literal["yaml", "toml", "json", "env"] | None = None,
 ) -> None:
+    """
+    Write data to a file or stdout in various formats.
+    This function serializes and writes data to a file or standard output in the specified format.
+    Supported formats include YAML, TOML, JSON, and ENV (environment variable format).
+    Args:
+        data (Any): The data to be written. Should be serializable in the chosen format.
+            For YAML, TOML, and JSON, this is typically a dictionary or list.
+            For ENV format, this must be a dictionary with string keys and values.
+        file_path (Path | None): The path to the output file. If None, writes to stdout.
+        file_type (Literal["yaml", "toml", "json", "env"] | None, optional): The format to write.
+            Required when file_path is None. When file_path is provided, the format is
+            determined from the file extension. Defaults to None.
+    Raises:
+        ValueError: If file_type is None when file_path is None, or if the file format
+            is not supported.
+    Example:
+        >>> from pathlib import Path
+        >>> data = {"key": "value", "number": 42}
+        >>> dump_file(data, Path("config.yaml"))
+        >>> dump_file(data, None, file_type="json")  # Writes to stdout
+    Note:
+        - For YAML files, extensions .yaml and .yml are both supported
+        - For ENV files, each key-value pair is written as KEY=VALUE on a new line
+        - The file is automatically closed after writing (except for stdout)
+    """
     try:
         if file_path is None:
             if file_type is None:
@@ -159,6 +201,35 @@ def dump_file(
 def merge_configs(
     config_files: list[Path], merge_strategy: MergeStrategy = MergeStrategy.REPLACE
 ) -> Any:
+    """
+    Merge multiple configuration files into a single configuration object.
+
+    This function loads and merges configuration files sequentially, applying the specified
+    merge strategy when combining configurations of the same type (dict, list, or set).
+
+    Args:
+        config_files (list[Path]): A list of Path objects pointing to configuration files
+            to be merged. Files are processed in the order they appear in the list.
+        merge_strategy (MergeStrategy, optional): The strategy to use when merging
+            configurations. Defaults to MergeStrategy.REPLACE.
+
+    Returns:
+        Any: The merged configuration object. The type depends on the configuration files:
+            - dict if merging dictionary configurations
+            - list if merging list configurations
+            - set if merging set configurations
+            - The type of the last configuration file if types are incompatible
+
+    Raises:
+        warnings.warn: Issues a warning when attempting to merge incompatible types,
+            and falls back to replacing with the newer configuration.
+
+    Note:
+        - If config_files is empty, returns None.
+        - When merging incompatible types, the function replaces the existing configuration
+          with the new one and issues a warning.
+        - The first configuration file determines the initial structure.
+    """
     merged_config: Any = None
 
     for file_path in config_files:
