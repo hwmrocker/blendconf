@@ -69,7 +69,10 @@ def main(
                 raise typer.Exit(code=1)
 
         dump_file(merged_config, output_file, file_type)
-        print("[green]Success:[/green] Merged configuration written.")
+        if output_file:
+            print(
+                f"[green]Success:[/green] Merged configuration written to {output_file}"
+            )
 
     except Exception as e:
         print(f"[red]Error:[/red] {e}")
